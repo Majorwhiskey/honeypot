@@ -1,7 +1,7 @@
 import os
 
 SSH_PORT = 2222
-HTTP_PORT = 8080
+HTTP_PORT = 8888
 DASHBOARD_PORT = 5000
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

@@ -1,5 +1,7 @@
 # Honeypot System
 
+> **Pragyan Edusec** &nbsp;|&nbsp; Internship Project &nbsp;&mdash;&nbsp; **KLE Institute of Technology**
+
 A multi-service honeypot that emulates SSH and HTTP servers to capture, log, and visualise real-world attack traffic. All events are stored in a local SQLite database and displayed on a live threat-intelligence dashboard.
 
 ---
@@ -147,6 +149,12 @@ HTTP_SERVER_HEADER = "Apache/2.4.41 (Ubuntu)"
 ## Security Notice
 
 Run this only in controlled, isolated environments (a dedicated VM or cloud instance). Never expose the dashboard port to the public internet without authentication. The honeypot is intentionally deceptive — ensure you have authorization before deploying on any network.
+
+---
+
+## About
+
+This project was developed as an internship assignment at **Pragyan Edusec** and presented to **KLE Institute of Technology**.
 
 ---
 

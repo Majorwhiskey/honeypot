@@ -15,9 +15,10 @@ if __name__ == "__main__":
     os.makedirs(os.path.join(_root, "data"), exist_ok=True)
     init_db()
 
-    print("=" * 50)
-    print("  HONEYPOT SYSTEM")
-    print("=" * 50)
+    print("=" * 58)
+    print("  HONEYPOT SYSTEM  —  PRAGYAN EDUSEC")
+    print("  KLE INSTITUTE OF TECHNOLOGY  //  INTERNSHIP PROJECT")
+    print("=" * 58)
 
     services = [
         ("SSH Honeypot",  start_ssh_honeypot),
@@ -34,10 +35,10 @@ if __name__ == "__main__":
     print()
     print("  Dashboard  →  http://localhost:5000")
     print("  SSH        →  port 2222")
-    print("  HTTP       →  http://localhost:8080")
+    print("  HTTP       →  http://localhost:8888")
     print()
     print("  Press Ctrl+C to stop")
-    print("=" * 50)
+    print("=" * 58)
 
     try:
         while True:
