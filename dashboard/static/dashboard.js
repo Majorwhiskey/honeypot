@@ -266,8 +266,9 @@ function renderCredentials(data) {
   const tbody = document.querySelector('#cred-table tbody');
   tbody.innerHTML = data.map(r => `
     <tr>
+      <td><span class="badge badge-${r.service}">${r.service.toUpperCase()}</span></td>
       <td style="color:var(--green)">${esc(r.username)}</td>
-      <td style="color:var(--text)">${esc(r.password)}</td>
+      <td style="color:var(--amber)">${esc(r.password)}</td>
       <td style="color:var(--red);text-align:right;font-family:var(--font-hud);font-size:11px">${r.count}</td>
     </tr>`).join('');
 }
@@ -359,5 +360,6 @@ function shortTime(iso) {
 
 function detail(e) {
   if (e.service === 'ssh') return esc(`${e.username || '—'}:${e.password || '—'}`);
+  if (e.username || e.password) return esc(`${e.username || '—'}:${e.password || '—'}`);
   return esc(`${e.method || ''} ${e.path || ''}`);
 }

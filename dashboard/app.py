@@ -70,12 +70,12 @@ def top_ips():
 @app.route("/api/top-credentials")
 def top_credentials():
     rows = _query("""
-        SELECT username, password, COUNT(*) AS count
+        SELECT service, username, password, COUNT(*) AS count
         FROM events
-        WHERE service='ssh' AND username IS NOT NULL AND username != ''
-        GROUP BY username, password
+        WHERE username IS NOT NULL AND username != ''
+        GROUP BY service, username, password
         ORDER BY count DESC
-        LIMIT 15
+        LIMIT 20
     """)
     return jsonify(rows)
 
