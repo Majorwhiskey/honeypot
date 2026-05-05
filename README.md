@@ -9,8 +9,9 @@ A multi-service honeypot that emulates SSH and HTTP servers to capture, log, and
 ## Features
 
 - **SSH Honeypot** — listens on port 2222, presents an OpenSSH banner, and logs every credential pair attempted
-- **HTTP Honeypot** — listens on port 8080, serves convincing fake pages (WordPress login, phpMyAdmin, admin panel, `.env`) and logs all probes
+- **HTTP Honeypot** — listens on port 8888, serves convincing fake pages (WordPress login, phpMyAdmin, admin panel, `.env`) and logs all probes including submitted credentials
 - **Live Dashboard** — Flask web app on port 5000 with real-time stats, a global attack-origin map, timeline chart, top-attacker table, and credential feed
+- **Credential Intelligence** — captures and displays username/password pairs from both SSH brute-force attempts and HTTP login form submissions, with per-service badges
 - **GeoIP Enrichment** — each attacker IP is automatically resolved to country, city, and coordinates via the ip-api.com free API
 - **SQLite Logging** — all events are persisted locally; no external database required
 
@@ -50,7 +51,7 @@ requests>=2.31.0
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/<your-username>/honeypot.git
+git clone https://github.com/Majorwhiskey/honeypot.git
 cd honeypot
 
 # 2. Create and activate a virtual environment
@@ -67,16 +68,17 @@ python main.py
 The system prints its endpoints on startup:
 
 ```
-==================================================
-  HONEYPOT SYSTEM
-==================================================
+==========================================================
+  HONEYPOT SYSTEM  —  PRAGYAN EDUSEC
+  KLE INSTITUTE OF TECHNOLOGY  //  INTERNSHIP PROJECT
+==========================================================
 
   Dashboard  →  http://localhost:5000
   SSH        →  port 2222
-  HTTP       →  http://localhost:8080
+  HTTP       →  http://localhost:8888
 
   Press Ctrl+C to stop
-==================================================
+==========================================================
 ```
 
 ---
@@ -91,8 +93,8 @@ Open `http://localhost:5000` in your browser.
 | Global map | Leaflet map with a marker per attacker IP |
 | Attack timeline | Hourly bar chart for the last 24 hours |
 | Top threat actors | Bar chart of the 10 most active IPs |
-| Credential intelligence | Most-tried SSH username/password pairs |
-| Live event feed | Latest 50 events, auto-refreshing every 5 seconds |
+| Credential intelligence | Username/password pairs captured from both SSH and HTTP logins, with service badge (SSH/HTTP) and attempt count |
+| Live event feed | Latest 50 events auto-refreshing every 15 seconds — shows `username:password` for credential events, `METHOD /path` for plain probes |
 
 ---
 
@@ -105,6 +107,8 @@ Open `http://localhost:5000` in your browser.
 | `/admin`, `/login`, `/administrator` | Generic admin panel |
 | `/.env`, `/.env.backup`, `/.env.local` | Fake environment file with plausible credentials |
 | Everything else | Apache2 Ubuntu default page |
+
+Credentials submitted to any of these forms are extracted from the POST body and stored in the database, then surfaced in the dashboard credential table alongside SSH credentials.
 
 ---
 
@@ -122,8 +126,8 @@ All events land in `data/honeypot.db`, table `events`:
 | `country` | TEXT | GeoIP country |
 | `city` | TEXT | GeoIP city |
 | `lat` / `lon` | REAL | GeoIP coordinates |
-| `username` | TEXT | Attempted username |
-| `password` | TEXT | Attempted password |
+| `username` | TEXT | Attempted username (SSH or HTTP form) |
+| `password` | TEXT | Attempted password (SSH or HTTP form) |
 | `method` | TEXT | HTTP method |
 | `path` | TEXT | HTTP path |
 | `user_agent` | TEXT | HTTP User-Agent |
@@ -136,13 +140,31 @@ All events land in `data/honeypot.db`, table `events`:
 Edit `honeypot/config.py` to change ports or banners:
 
 ```python
-SSH_PORT   = 2222
-HTTP_PORT  = 8080
+SSH_PORT       = 2222
+HTTP_PORT      = 8888
 DASHBOARD_PORT = 5000
 
 SSH_BANNER         = "SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.6"
 HTTP_SERVER_HEADER = "Apache/2.4.41 (Ubuntu)"
 ```
+
+> **Note:** HTTP port was moved from 8080 to 8888 to avoid conflict with `ApplicationWebServer.exe` which permanently occupies 8080 on some Windows systems.
+
+---
+
+## Testing Locally
+
+```powershell
+# Trigger SSH honeypot (enter any password when prompted)
+ssh -p 2222 root@localhost
+
+# Trigger HTTP honeypot via browser or PowerShell
+Invoke-WebRequest -Uri "http://localhost:8888/wp-login.php" -UseBasicParsing
+Invoke-WebRequest -Uri "http://localhost:8888/admin"        -UseBasicParsing
+Invoke-WebRequest -Uri "http://localhost:8888/phpmyadmin"   -UseBasicParsing
+```
+
+Submit a username and password on any fake login page — the credentials will appear in the **Credential Intelligence** table on the dashboard within 15 seconds.
 
 ---
 
