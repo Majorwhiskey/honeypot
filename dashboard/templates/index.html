@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HONEYPOT // CONTROL CENTER</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- Matrix rain background -->
+<canvas id="matrix-bg"></canvas>
+
+<!-- Scanline overlay -->
+<div id="scanlines"></div>
+
+<!-- ─── HEADER ─────────────────────────────────────────────────────────── -->
+<header>
+  <div class="hdr-left">
+    <div class="hdr-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/>
+        <line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="8.5" x2="22" y2="8.5"/>
+        <line x1="2" y1="15.5" x2="22" y2="15.5"/>
+      </svg>
+    </div>
+    <div>
+      <div class="hdr-title" data-text="HONEYPOT">HONEYPOT</div>
+      <div class="hdr-sub">THREAT INTELLIGENCE CENTER &nbsp;//&nbsp; CONTROL SYSTEM v1.0</div>
+    </div>
+  </div>
+
+  <div class="hdr-center">
+    <div class="threat-wrap">
+      <div class="threat-label">THREAT LEVEL</div>
+      <div class="threat-value" id="threat-value">ASSESSING</div>
+      <div class="threat-bar-bg"><div class="threat-bar-fill" id="threat-bar"></div></div>
+    </div>
+  </div>
+
+  <div class="hdr-right">
+    <div class="hdr-clock" id="clock">00:00:00</div>
+    <div class="hdr-status">
+      <span class="pulse-dot"></span>
+      <span class="status-text">SYSTEM ONLINE</span>
+    </div>
+    <div class="hdr-updated muted" id="last-updated">SYNCING...</div>
+  </div>
+</header>
+
+<!-- ─── MAIN ───────────────────────────────────────────────────────────── -->
+<main>
+
+  <!-- Stat cards -->
+  <div class="stats-row">
+    <div class="card stat-card">
+      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
+      <div class="stat-label">TOTAL ATTACKS</div>
+      <div class="stat-value green" id="total-events">0</div>
+      <div class="stat-bar-row"><div class="stat-bar" style="background:var(--green)"></div></div>
+    </div>
+    <div class="card stat-card">
+      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
+      <div class="stat-label">UNIQUE IPs</div>
+      <div class="stat-value green" id="unique-ips">0</div>
+      <div class="stat-bar-row"><div class="stat-bar" style="background:var(--green);width:60%"></div></div>
+    </div>
+    <div class="card stat-card">
+      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
+      <div class="stat-label">COUNTRIES</div>
+      <div class="stat-value amber" id="countries">0</div>
+      <div class="stat-bar-row"><div class="stat-bar" style="background:var(--amber);width:40%"></div></div>
+    </div>
+    <div class="card stat-card">
+      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
+      <div class="stat-label">SSH INTRUSIONS</div>
+      <div class="stat-value red" id="ssh-count">0</div>
+      <div class="stat-bar-row"><div class="stat-bar" style="background:var(--red);width:70%"></div></div>
+    </div>
+    <div class="card stat-card">
+      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
+      <div class="stat-label">HTTP PROBES</div>
+      <div class="stat-value amber" id="http-count">0</div>
+      <div class="stat-bar-row"><div class="stat-bar" style="background:var(--amber);width:30%"></div></div>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div class="card map-card">
+    <div class="card-corner-tl"></div><div class="card-corner-br"></div>
+    <div class="card-title">
+      <span class="title-bracket">[</span> GLOBAL ATTACK ORIGINS <span class="title-bracket">]</span>
+    </div>
+    <div id="map"></div>
+  </div>
+
+  <!-- Charts -->
+  <div class="two-col">
+    <div class="card">
+      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
+      <div class="card-title">
+        <span class="title-bracket">[</span> ATTACK TIMELINE &mdash; LAST 24H <span class="title-bracket">]</span>
+      </div>
+      <div class="chart-wrap"><canvas id="timeline-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
+      <div class="card-title">
+        <span class="title-bracket">[</span> TOP THREAT ACTORS <span class="title-bracket">]</span>
+      </div>
+      <div class="chart-wrap"><canvas id="top-ips-chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Tables -->
+  <div class="two-col">
+    <div class="card">
+      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
+      <div class="card-title">
+        <span class="title-bracket">[</span> CREDENTIAL INTELLIGENCE <span class="title-bracket">]</span>
+      </div>
+      <div class="table-wrap">
+        <table id="cred-table">
+          <thead>
+            <tr><th>USERNAME</th><th>PASSWORD</th><th>ATTEMPTS</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
+      <div class="card-title">
+        <span class="title-bracket">[</span> LIVE EVENT FEED <span class="title-bracket">]</span>
+      </div>
+      <div class="table-wrap">
+        <table id="events-table">
+          <thead>
+            <tr><th>TIMESTAMP</th><th>SVC</th><th>ORIGIN IP</th><th>NATION</th><th>PAYLOAD</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="/static/dashboard.js"></script>
+</body>
+</html>
