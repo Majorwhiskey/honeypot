@@ -11,10 +11,7 @@
 </head>
 <body>
 
-<!-- Matrix rain background -->
 <canvas id="matrix-bg"></canvas>
-
-<!-- Scanline overlay -->
 <div id="scanlines"></div>
 
 <!-- ─── HEADER ─────────────────────────────────────────────────────────── -->
@@ -29,7 +26,7 @@
     </div>
     <div>
       <div class="hdr-title" data-text="HONEYPOT">HONEYPOT</div>
-        <div class="hdr-sub">THREAT INTELLIGENCE CENTER &nbsp;//&nbsp; CONTROL SYSTEM v1.0</div>
+      <div class="hdr-sub">THREAT INTELLIGENCE CENTER &nbsp;//&nbsp; CONTROL SYSTEM v2.0</div>
       <div class="hdr-org">PRAGYAN EDUSEC &nbsp;|&nbsp; KLE INSTITUTE OF TECHNOLOGY</div>
     </div>
   </div>
@@ -45,8 +42,8 @@
   <div class="hdr-right">
     <div class="hdr-clock" id="clock">00:00:00</div>
     <div class="hdr-status">
-      <span class="pulse-dot"></span>
-      <span class="status-text">SYSTEM ONLINE</span>
+      <span class="pulse-dot" id="ws-dot"></span>
+      <span class="status-text" id="ws-status">CONNECTING…</span>
     </div>
     <div class="hdr-updated muted" id="last-updated">SYNCING...</div>
   </div>
@@ -77,14 +74,22 @@
     </div>
     <div class="card stat-card">
       <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="stat-label">SSH INTRUSIONS</div>
-      <div class="stat-value red" id="ssh-count">0</div>
+      <div class="stat-label">CREDENTIALS</div>
+      <div class="stat-value red" id="cred-count">0</div>
       <div class="stat-bar-row"><div class="stat-bar" style="background:var(--red);width:70%"></div></div>
     </div>
     <div class="card stat-card">
       <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="stat-label">HTTP PROBES</div>
-      <div class="stat-value amber" id="http-count">0</div>
+      <div class="stat-label">SSH / HTTP / FTP / TEL</div>
+      <div class="stat-mini-row">
+        <span class="stat-mini red"   id="ssh-count">0</span>
+        <span class="stat-mini-sep">/</span>
+        <span class="stat-mini amber" id="http-count">0</span>
+        <span class="stat-mini-sep">/</span>
+        <span class="stat-mini blue"  id="ftp-count">0</span>
+        <span class="stat-mini-sep">/</span>
+        <span class="stat-mini purple" id="telnet-count">0</span>
+      </div>
       <div class="stat-bar-row"><div class="stat-bar" style="background:var(--amber);width:30%"></div></div>
     </div>
   </div>
@@ -98,21 +103,48 @@
     <div id="map"></div>
   </div>
 
-  <!-- Charts -->
-  <div class="two-col">
+  <!-- Three-column charts -->
+  <div class="three-col">
     <div class="card">
       <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="card-title">
-        <span class="title-bracket">[</span> ATTACK TIMELINE &mdash; LAST 24H <span class="title-bracket">]</span>
-      </div>
+      <div class="card-title"><span class="title-bracket">[</span> ATTACK TIMELINE &mdash; LAST 24H <span class="title-bracket">]</span></div>
       <div class="chart-wrap"><canvas id="timeline-chart"></canvas></div>
     </div>
     <div class="card">
       <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="card-title">
-        <span class="title-bracket">[</span> TOP THREAT ACTORS <span class="title-bracket">]</span>
-      </div>
+      <div class="card-title"><span class="title-bracket">[</span> TOP THREAT ACTORS <span class="title-bracket">]</span></div>
       <div class="chart-wrap"><canvas id="top-ips-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
+      <div class="card-title"><span class="title-bracket">[</span> COUNTRY DISTRIBUTION <span class="title-bracket">]</span></div>
+      <div class="chart-wrap"><canvas id="country-chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Filter / export bar -->
+  <div class="filter-bar card">
+    <div class="card-corner-tl"></div><div class="card-corner-br"></div>
+    <div class="filter-inner">
+      <div class="filter-group">
+        <select id="filter-service" class="filter-select">
+          <option value="">ALL SERVICES</option>
+          <option value="ssh">SSH</option>
+          <option value="http">HTTP</option>
+          <option value="ftp">FTP</option>
+          <option value="telnet">TELNET</option>
+        </select>
+        <input id="filter-country" class="filter-input" placeholder="COUNTRY…" maxlength="40">
+        <input id="filter-ip"      class="filter-input" placeholder="IP ADDRESS…" maxlength="40">
+        <input id="filter-q"       class="filter-input wide" placeholder="SEARCH USERNAME / PATH…" maxlength="80">
+        <button class="filter-btn" onclick="applyFilter()">FILTER</button>
+        <button class="filter-btn dim" onclick="clearFilter()">CLEAR</button>
+      </div>
+      <div class="export-group">
+        <span class="filter-label">EXPORT:</span>
+        <button class="filter-btn export-btn" onclick="exportData('csv')">CSV</button>
+        <button class="filter-btn export-btn" onclick="exportData('json')">JSON</button>
+      </div>
     </div>
   </div>
 
@@ -120,14 +152,10 @@
   <div class="two-col">
     <div class="card">
       <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="card-title">
-        <span class="title-bracket">[</span> CREDENTIAL INTELLIGENCE <span class="title-bracket">]</span>
-      </div>
+      <div class="card-title"><span class="title-bracket">[</span> CREDENTIAL INTELLIGENCE <span class="title-bracket">]</span></div>
       <div class="table-wrap">
         <table id="cred-table">
-          <thead>
-            <tr><th>SVC</th><th>USERNAME</th><th>PASSWORD</th><th>ATTEMPTS</th></tr>
-          </thead>
+          <thead><tr><th>SVC</th><th>USERNAME</th><th>PASSWORD</th><th>ATTEMPTS</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -136,14 +164,19 @@
       <div class="card-corner-tl"></div><div class="card-corner-br"></div>
       <div class="card-title">
         <span class="title-bracket">[</span> LIVE EVENT FEED <span class="title-bracket">]</span>
+        <span class="live-badge">&#9679; LIVE</span>
       </div>
-      <div class="table-wrap">
+      <div class="table-wrap" id="events-wrap">
         <table id="events-table">
-          <thead>
-            <tr><th>TIMESTAMP</th><th>SVC</th><th>ORIGIN IP</th><th>NATION</th><th>PAYLOAD</th></tr>
-          </thead>
+          <thead><tr><th>TIME</th><th>SVC</th><th>ORIGIN IP</th><th>NATION</th><th>DETAIL</th><th>SCANNER</th></tr></thead>
           <tbody></tbody>
         </table>
+      </div>
+      <div class="pagination-bar">
+        <button class="pg-btn" id="btn-prev" onclick="prevPage()">&#9664; PREV</button>
+        <span class="pg-info" id="page-info">PAGE 1</span>
+        <button class="pg-btn" id="btn-next" onclick="nextPage()">NEXT &#9654;</button>
+        <span class="pg-total muted" id="total-info"></span>
       </div>
     </div>
   </div>
@@ -163,6 +196,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script src="/static/dashboard.js"></script>
 </body>
 </html>
