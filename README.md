@@ -10,9 +10,9 @@ A professional-grade multi-service honeypot that emulates SSH, HTTP, FTP, and Te
 
 - **SSH Honeypot** — presents an OpenSSH banner, accepts auth, and drops attackers into a fully interactive fake shell; logs every command typed, including malware download URLs (`wget`/`curl`)
 - **HTTP Honeypot** — serves convincing fake pages (WordPress, phpMyAdmin, Jenkins, Jupyter, Laravel, admin panels, `.env` files) and fingerprints 13 known scanner tools
-- **FTP Honeypot** — standard port 21, captures `USER`/`PASS` credential attempts
-- **Telnet Honeypot** — standard port 23, captures login credentials from IoT bots and scanners
-- **Real-time Dashboard** — Socket.IO-powered Flask app; events appear instantly with no polling delay
+- **FTP Honeypot** — captures `USER`/`PASS` credential attempts (default port 2121; set `FTP_PORT=21` with `sudo` for standard)
+- **Telnet Honeypot** — captures login credentials from IoT bots and scanners (default port 2323; set `TELNET_PORT=23` with `sudo` for standard)
+- **Real-time Dashboard** — Stitch-design Flask app at `localhost:5000`; events stream instantly via Socket.IO with no polling delay
 - **Credential Intelligence** — captures and ranks username/password pairs across all four services
 - **GeoIP + ASN Enrichment** — each IP is resolved to country, city, coordinates, and autonomous system (e.g. "AS4134 China Telecom")
 - **Scanner Detection** — fingerprints Masscan, Nmap, Nikto, ZGrab, Shodan, Censys, Nuclei, sqlmap, Metasploit, curl, wget, Python-Requests, Go-HTTP-Client
@@ -28,25 +28,36 @@ A professional-grade multi-service honeypot that emulates SSH, HTTP, FTP, and Te
 
 ```
 main.py
-├── honeypot/ssh_honeypot.py    — paramiko SSH server with fake interactive shell
-├── honeypot/http_honeypot.py   — Flask decoy pages + scanner fingerprinting
-├── honeypot/ftp_honeypot.py    — raw TCP FTP credential capture
-├── honeypot/telnet_honeypot.py — raw TCP Telnet credential capture
-├── honeypot/logger.py          — SQLite writer, GeoIP/ASN lookup, webhook alerts
-├── honeypot/config.py          — env-based configuration
-└── dashboard/app.py            — Flask + Socket.IO dashboard & REST API
-    ├── templates/index.html    — cyberpunk single-page UI
-    └── static/                 — CSS & JS (Chart.js, Leaflet, Socket.IO)
+├── honeypot/
+│   ├── ssh_honeypot.py     — paramiko SSH server with fake interactive shell
+│   ├── http_honeypot.py    — Flask decoy pages + scanner fingerprinting
+│   ├── ftp_honeypot.py     — raw TCP FTP credential capture
+│   ├── telnet_honeypot.py  — raw TCP Telnet credential capture
+│   ├── logger.py           — SQLite writer, GeoIP/ASN lookup, webhook alerts
+│   └── config.py           — env-based configuration
+│
+├── dashboard/
+│   ├── app.py              — Flask + Socket.IO REST API
+│   ├── templates/index.html — Stitch-design single-page dashboard
+│   └── static/
+│       ├── style.css       — Stitch dark theme (Manrope, #121410 bg, amber accent)
+│       └── dashboard.js    — Chart.js, Leaflet, Socket.IO, scramble/glitch animations
+│
+└── frontend/               — React + Vite + Tailwind (optional separate UI)
+    └── src/
+        ├── pages/DashboardPage.jsx   — attack telemetry, charts, top IPs
+        ├── pages/LiveFeedPage.jsx    — real-time filterable event feed
+        └── pages/CredentialsPage.jsx — captured credential rankings + CSV export
 ```
 
-All services run as daemon threads started from `main.py`.
+All honeypot services run as daemon threads started from `main.py`.
 
 ---
 
 ## Requirements
 
 - Python 3.9+
-- `sudo` / root for standard ports 21 and 23 on Linux
+- FTP and Telnet default to unprivileged ports (2121 / 2323) — **no `sudo` needed**
 
 ```
 paramiko>=3.4.0
@@ -62,11 +73,11 @@ python-dotenv>=1.0.0
 ## Quick Start
 
 ```bash
-# 1. Clone the repo
+# 1. Clone
 git clone https://github.com/Majorwhiskey/honeypot.git
 cd honeypot
 
-# 2. Create and activate a virtual environment
+# 2. Virtual environment
 python3 -m venv venv
 source venv/bin/activate       # Windows: venv\Scripts\activate
 
@@ -77,8 +88,8 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env to set ports, dashboard auth, webhook URLs, etc.
 
-# 5. Run  (use sudo if FTP/Telnet are on standard ports 21/23)
-sudo venv/bin/python main.py
+# 5. Run — no sudo required with default ports
+venv/bin/python main.py
 ```
 
 Startup output:
@@ -92,8 +103,8 @@ Startup output:
   Dashboard  →  http://localhost:5000
   SSH        →  port 2222
   HTTP       →  http://localhost:8888
-  FTP        →  port 21  (standard)
-  Telnet     →  port 23  (standard)
+  FTP        →  port 2121
+  Telnet     →  port 2323
 
   Logs       →  data/honeypot.log
 
@@ -108,11 +119,11 @@ Startup output:
 Copy `.env.example` to `.env` and edit as needed. No code changes required.
 
 ```env
-# Ports
+# Ports (FTP/Telnet default to unprivileged ports — no sudo needed)
 SSH_PORT=2222
 HTTP_PORT=8888
-FTP_PORT=21
-TELNET_PORT=23
+FTP_PORT=2121
+TELNET_PORT=2323
 DASHBOARD_PORT=5000
 
 # Dashboard basic auth (leave empty to disable)
@@ -132,7 +143,7 @@ SSH_BANNER=SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.6
 HTTP_SERVER_HEADER=Apache/2.4.41 (Ubuntu)
 ```
 
-> **Privileged ports:** FTP (21) and Telnet (23) require root on Linux. Either run with `sudo` or grant the capability once:
+> **Standard ports (21 / 23):** To use the real FTP/Telnet ports, set `FTP_PORT=21` and `TELNET_PORT=23` in `.env` and run with `sudo`, or grant the capability once:
 > ```bash
 > sudo setcap 'cap_net_bind_service=+ep' venv/bin/python3
 > ```
@@ -141,19 +152,54 @@ HTTP_SERVER_HEADER=Apache/2.4.41 (Ubuntu)
 
 ## Dashboard
 
-Open `http://localhost:5000` in your browser (login required if `DASHBOARD_USER` is set).
+Open `http://localhost:5000` (login required if `DASHBOARD_USER` is set).
+
+The dashboard is built on the **Stitch dark design system** — Manrope font, `#121410` background, amber `#ffba38` accent — with the following visual details:
+
+- Matrix rain canvas with earthy amber/green chars
+- CRT scanlines overlay
+- Scramble text animation on all headings and labels
+- Typewriter + blink cursor on module IDs
+- Sidebar status cycles through `MONITORING → SCANNING → ACTIVE`
+- HONEYPOT title glitch animation
+- Scan-line sweep on live tables
+- Radar sweep on the attack map
+- `KLE INSTITUTE OF TECHNOLOGY` glowing amber in the footer
 
 | Widget | Description |
 |---|---|
-| Stat cards | Total attacks, unique IPs, countries, credentials captured, SSH/HTTP/FTP/Telnet breakdown |
+| Stat cards | Total attacks, unique IPs, countries, credentials captured |
+| Service bars | Live SSH / HTTP / FTP / Telnet breakdown with animated fill bars |
+| Threat level | Colour-coded bar: MINIMAL → CRITICAL based on total event count |
 | Global map | Leaflet dark map — circle marker per attacker IP, sized by hit count |
-| Attack timeline | Line chart — hourly attack count over the last 24 hours |
-| Top threat actors | Horizontal bar chart — 10 most active IPs |
+| Attack timeline | Line chart — hourly event count over the last 24 hours |
+| Top threat actors | Horizontal bar chart — 10 most active source IPs |
 | Country distribution | Doughnut chart — top 12 origin countries |
-| Filter bar | Filter live feed by service, country, IP, or free-text search |
+| Filter bar | Filter by service, country, IP, or free-text search |
 | Export | Download current filtered view as CSV or JSON |
-| Credential intelligence | Ranked username/password pairs across all services |
-| Live event feed | Socket.IO push — events appear instantly; paginated (50/page); scanner tool tagged |
+| Credential intelligence | Ranked username/password pairs with attempt counts |
+| Live event feed | Socket.IO push — events appear instantly, paginated (50/page) |
+
+---
+
+## React Frontend (optional)
+
+A separate React + Vite UI lives in `frontend/`. It connects to the same Flask API and provides three dedicated pages:
+
+| Page | Route | Description |
+|---|---|---|
+| Attack Telemetry | `/dashboard` | Stats, 24h SVG timeline, top IPs table, countries histogram |
+| Live Threat Feed | `/feed` | Real-time filterable event table via Socket.IO |
+| Captured Credentials | `/credentials` | Credential rankings + CSV export |
+
+```bash
+cd frontend
+npm install
+npm run dev      # dev server at http://localhost:5173
+npm run build    # production build → frontend/dist/
+```
+
+Set `VITE_API_URL` and `VITE_SOCKET_URL` in `frontend/.env` to point at the Flask backend.
 
 ---
 
@@ -167,7 +213,7 @@ Open `http://localhost:5000` in your browser (login required if `DASHBOARD_USER`
 | `/jenkins`, `/j_spring_security_check` | Jenkins login |
 | `/jupyter`, `/notebook` | Jupyter Notebook |
 | `/laravel`, `/debug` | Laravel error page (500) |
-| `/.env`, `/.env.backup`, `/.env.local`, `/.env.production` | Fake environment file with plausible credentials |
+| `/.env`, `/.env.backup`, `/.env.local`, `/.env.production` | Fake environment file |
 | Everything else | Apache2 Ubuntu default page |
 
 ---
@@ -221,10 +267,10 @@ Indexes on `timestamp`, `src_ip`, and `service`. WAL mode enabled for concurrent
 ssh -p 2222 root@localhost
 
 # FTP
-ftp localhost 21
+ftp localhost 2121
 
 # Telnet
-telnet localhost 23
+telnet localhost 2323
 
 # HTTP — via browser or curl
 curl http://localhost:8888/wp-login.php
@@ -243,7 +289,7 @@ Deploy only in controlled, isolated environments (a dedicated VM or cloud instan
 
 ## About
 
-This project was developed as an internship assignment at **Pragyan Edusec** and presented to **KLE Institute of Technology**.
+Developed as an internship assignment at **Pragyan Edusec**, presented to **KLE Institute of Technology**.
 
 ---
 
