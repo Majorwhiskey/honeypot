@@ -1,0 +1,253 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== DESIGN TOKENS ===== */
+@layer base {
+  :root {
+    --color-primary: 0 32 70;
+    --color-primary-container: 27 54 93;
+    --color-on-primary: 255 255 255;
+    --color-on-primary-container: 135 160 205;
+    --color-primary-fixed: 214 227 255;
+    --color-on-primary-fixed-variant: 46 71 111;
+    --color-surface: 247 249 251;
+    --color-surface-dim: 216 218 220;
+    --color-surface-bright: 247 249 251;
+    --color-surface-variant: 224 227 229;
+    --color-surface-container: 236 238 240;
+    --color-surface-container-low: 242 244 246;
+    --color-surface-container-high: 230 232 234;
+    --color-surface-container-lowest: 255 255 255;
+    --color-surface-container-highest: 224 227 229;
+    --color-on-surface: 25 28 30;
+    --color-on-surface-variant: 68 71 78;
+    --color-secondary: 81 95 116;
+    --color-secondary-container: 213 227 252;
+    --color-on-secondary-container: 87 101 122;
+    --color-secondary-fixed: 213 227 252;
+    --color-secondary-fixed-dim: 185 199 223;
+    --color-on-secondary-fixed: 13 28 46;
+    --color-on-secondary-fixed-variant: 58 72 91;
+    --color-tertiary: 50 28 0;
+    --color-tertiary-container: 79 47 0;
+    --color-tertiary-fixed-dim: 241 189 129;
+    --color-on-tertiary: 43 23 0;
+    --color-on-tertiary-container: 198 150 94;
+    --color-on-tertiary-fixed-variant: 98 63 15;
+    --color-outline: 116 119 127;
+    --color-outline-variant: 196 198 207;
+    --color-error: 186 26 26;
+    --color-error-container: 255 218 214;
+    --color-on-error: 255 255 255;
+    --color-on-error-container: 147 0 10;
+    --color-background: 247 249 251;
+    --color-on-background: 25 28 30;
+    --color-inverse-surface: 45 49 51;
+    --color-inverse-on-surface: 239 241 243;
+  }
+
+  .dark {
+    --color-primary: 191 202 177;
+    --color-primary-container: 60 70 51;
+    --color-on-primary: 42 51 34;
+    --color-on-primary-container: 168 180 155;
+    --color-primary-fixed: 219 230 204;
+    --color-on-primary-fixed-variant: 64 74 55;
+    --color-surface: 18 20 16;
+    --color-surface-dim: 18 20 16;
+    --color-surface-bright: 56 58 53;
+    --color-surface-variant: 51 53 49;
+    --color-surface-container: 30 32 28;
+    --color-surface-container-low: 26 28 24;
+    --color-surface-container-high: 41 43 38;
+    --color-surface-container-lowest: 13 15 11;
+    --color-surface-container-highest: 51 53 49;
+    --color-on-surface: 227 227 220;
+    --color-on-surface-variant: 197 199 190;
+    --color-secondary: 193 198 215;
+    --color-secondary-container: 67 73 87;
+    --color-on-secondary-container: 179 184 201;
+    --color-secondary-fixed: 221 226 243;
+    --color-secondary-fixed-dim: 193 198 215;
+    --color-on-secondary-fixed: 22 28 40;
+    --color-on-secondary-fixed-variant: 65 71 84;
+    --color-tertiary: 255 186 56;
+    --color-tertiary-container: 91 61 0;
+    --color-tertiary-fixed-dim: 255 186 56;
+    --color-on-tertiary: 67 44 0;
+    --color-on-tertiary-container: 232 162 0;
+    --color-on-tertiary-fixed-variant: 96 65 0;
+    --color-outline: 143 146 137;
+    --color-outline-variant: 69 72 64;
+    --color-error: 255 180 171;
+    --color-error-container: 147 0 10;
+    --color-on-error: 105 0 5;
+    --color-on-error-container: 255 218 214;
+    --color-background: 18 20 16;
+    --color-on-background: 227 227 220;
+    --color-inverse-surface: 227 227 220;
+    --color-inverse-on-surface: 47 49 45;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #121410;
+    color: #e3e3dc;
+    font-family: 'Manrope', sans-serif;
+    overflow-x: hidden;
+  }
+
+  .dark [class*="rounded"]:not(.rounded-full):not([class*="rounded-full"]) {
+    border-radius: 0px !important;
+  }
+}
+
+/* ===== STATIC UTILITIES ===== */
+@layer components {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+  }
+
+  .micro-grid {
+    background-image: radial-gradient(circle, #454840 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: 0.05;
+  }
+}
+
+
+/* =============================================================
+   ANIMATIONS — exact from Stitch, outside @layer, hardcoded hex
+   ============================================================= */
+
+/* Custom scrollbar for tables */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #121410; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #454840; }
+
+/* --- Animation: Radar Sweep (Export page health widget) --- */
+@keyframes radar-sweep {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.radar-effect {
+    position: relative;
+    overflow: hidden;
+}
+.radar-sweep-line {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(from 0deg, transparent 0deg, transparent 300deg, rgba(255, 186, 56, 0.1) 360deg);
+    transform-origin: center;
+    animation: radar-sweep 4s linear infinite;
+    pointer-events: none;
+}
+
+/* --- Animation: Typewriter + Blink Cursor (Export page heading) --- */
+@keyframes typewriter {
+    from { width: 0; }
+    to { width: 100%; }
+}
+@keyframes blink {
+    from, to { border-color: transparent; }
+    50% { border-color: #ffba38; }
+}
+.typewriter-text {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid #ffba38;
+    animation: typewriter 2s steps(40, end), blink 0.75s step-end infinite;
+}
+
+/* --- Animation: Pulse Ring + Data Processing (Export page rings) --- */
+@keyframes pulse-ring {
+    0% { transform: scale(0.95); opacity: 0.2; }
+    50% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(0.95); opacity: 0.2; }
+}
+@keyframes rotate-data {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.data-processing-ring {
+    border: 1px dashed #bfcab1;
+    border-radius: 50%;
+    animation: rotate-data 20s linear infinite;
+}
+.data-pulse {
+    animation: pulse-ring 3s ease-in-out infinite;
+}
+
+/* --- Animation: Status Pulse (Inventory sidebar node status) --- */
+@keyframes status-pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0px transparent; }
+    50% { opacity: 0.7; box-shadow: 0 0 12px rgba(255, 186, 56, 0.4); }
+}
+.animate-status-pulse {
+    animation: status-pulse 3s infinite ease-in-out;
+}
+
+/* --- Animation: Table Scan Line (Inventory table sweep) --- */
+@keyframes scan-line {
+    0% { transform: translateY(-100%); opacity: 0; }
+    5% { opacity: 0.4; }
+    95% { opacity: 0.4; }
+    100% { transform: translateY(1000%); opacity: 0; }
+}
+.scan-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 186, 56, 0.3), transparent);
+    pointer-events: none;
+    z-index: 10;
+    animation: scan-line 6s linear infinite;
+}
+
+/* --- Animation: Subtle Glitch (Inventory time display) --- */
+@keyframes subtle-glitch {
+    0% { opacity: 1; transform: translateX(0); }
+    92% { opacity: 1; transform: translateX(0); }
+    93% { opacity: 0.8; transform: translateX(1px); }
+    94% { opacity: 1; transform: translateX(-1px); }
+    95% { opacity: 1; transform: translateX(0); }
+    98% { opacity: 0.9; }
+    100% { opacity: 1; }
+}
+.animate-subtle-glitch {
+    animation: subtle-glitch 4s infinite linear;
+}
+
+/* --- Animation: Sliding Text (VARAHA banner rotating words) --- */
+@keyframes text-slide-3 {
+    0%, 26.66% { transform: translateY(0%); }
+    33.33%, 60% { transform: translateY(-25%); }
+    66.66%, 93.33% { transform: translateY(-50%); }
+    100% { transform: translateY(-75%); }
+}
+.animate-text-slide-3 {
+    animation: text-slide-3 7.5s cubic-bezier(0.83, 0, 0.17, 1) infinite;
+}
+
+/* --- Progress bar shimmer for download state --- */
+@keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+    background: linear-gradient(90deg, #bfcab1 0%, #ffba38 50%, #bfcab1 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s ease-in-out infinite;
+}

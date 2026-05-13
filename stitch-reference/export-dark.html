@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-surface": "#e3e3dc",
+              "primary-fixed-dim": "#bfcab1",
+              "on-primary-fixed": "#151e0e",
+              "on-primary-container": "#a8b49b",
+              "surface-variant": "#333531",
+              "surface-container-lowest": "#0d0f0b",
+              "surface-container": "#1e201c",
+              "primary-container": "#3c4633",
+              "on-primary": "#2a3322",
+              "tertiary-fixed-dim": "#ffba38",
+              "outline-variant": "#454840",
+              "surface-container-high": "#292b26",
+              "on-tertiary-fixed-variant": "#604100",
+              "on-surface-variant": "#c5c7be",
+              "background": "#121410",
+              "on-secondary-fixed": "#161c28",
+              "error-container": "#93000a",
+              "primary": "#bfcab1",
+              "on-tertiary-fixed": "#281900",
+              "surface": "#121410",
+              "on-secondary-fixed-variant": "#414754",
+              "outline": "#8f9289",
+              "on-secondary": "#2a303d",
+              "on-error-container": "#ffdad6",
+              "tertiary-fixed": "#ffdeac",
+              "inverse-on-surface": "#2f312d",
+              "secondary": "#c1c6d7",
+              "surface-tint": "#bfcab1",
+              "surface-container-low": "#1a1c18",
+              "on-tertiary": "#432c00",
+              "surface-bright": "#383a35",
+              "primary-fixed": "#dbe6cc",
+              "secondary-container": "#434957",
+              "on-primary-fixed-variant": "#404a37",
+              "tertiary": "#ffba38",
+              "error": "#ffb4ab",
+              "on-error": "#690005",
+              "inverse-surface": "#e3e3dc",
+              "inverse-primary": "#57624d",
+              "on-background": "#e3e3dc",
+              "secondary-fixed-dim": "#c1c6d7",
+              "secondary-fixed": "#dde2f3",
+              "tertiary-container": "#5b3d00",
+              "surface-dim": "#121410",
+              "surface-container-highest": "#333531",
+              "on-secondary-container": "#b3b8c9",
+              "on-tertiary-container": "#e8a200"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .micro-grid {
+            background-image: radial-gradient(circle, #454840 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.05;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-tertiary selection:text-on-tertiary">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-14 bg-[#121410] dark:bg-[#121410] border-b border-[#454840]/15">
+<div class="text-lg font-bold tracking-tighter text-[#a8b49b] uppercase">SSS Defence</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<span class="font-['Manrope'] tracking-tight font-medium uppercase text-[0.875rem] text-[#a8b49b] opacity-70 hover:bg-[#383a35] transition-colors duration-150 px-2 py-1 cursor-pointer">Dashboard</span>
+<span class="font-['Manrope'] tracking-tight font-medium uppercase text-[0.875rem] text-[#ffba38] border-b-2 border-[#ffba38] px-2 py-1">Inventory</span>
+<span class="font-['Manrope'] tracking-tight font-medium uppercase text-[0.875rem] text-[#a8b49b] opacity-70 hover:bg-[#383a35] transition-colors duration-150 px-2 py-1 cursor-pointer">Logs</span>
+</div>
+<div class="w-px h-6 bg-outline-variant/30"></div>
+<div class="flex items-center gap-2">
+<button class="material-symbols-outlined text-[#a8b49b] p-1 hover:bg-[#383a35] transition-all">settings</button>
+</div>
+</div>
+</header>
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col pt-14 z-40 bg-[#1a1c18] dark:bg-[#1a1c18] w-64 border-r border-[#454840]/20">
+<div class="p-6">
+<h2 class="text-[#ffba38] font-black font-['Manrope'] tracking-widest text-[0.75rem] uppercase">VARAHA-INVENTORY</h2>
+<p class="text-[#3c4633] font-semibold uppercase tracking-[0.2em] text-[0.6rem] mt-1">LAB COMMAND UNIT</p>
+</div>
+<nav class="flex-1 px-0">
+<!-- Inventory Tab -->
+<a class="flex items-center gap-4 text-[#a8b49b]/60 px-6 py-4 hover:bg-[#292b26] transition-all duration-200 ease-in-out font-['Manrope'] font-semibold uppercase tracking-widest text-[0.6875rem]" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span>Inventory</span>
+</a>
+<!-- Export Tab (ACTIVE) -->
+<a class="flex items-center gap-4 bg-[#3c4633] text-[#a8b49b] px-6 py-4 border-l-4 border-[#ffba38] transition-all duration-200 ease-in-out font-['Manrope'] font-semibold uppercase tracking-widest text-[0.6875rem]" href="#">
+<span class="material-symbols-outlined" data-icon="ios_share" style="font-variation-settings: 'FILL' 1;">ios_share</span>
+<span>Export</span>
+</a>
+</nav>
+<div class="mt-auto p-6 border-t border-outline-variant/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-container-high flex items-center justify-center border border-outline-variant/20">
+<span class="material-symbols-outlined text-[1rem]">shield</span>
+</div>
+<div>
+<div class="text-[0.6rem] font-bold text-on-surface-variant uppercase tracking-tighter">SECURE NODE</div>
+<div class="text-[0.5rem] font-medium text-tertiary">LVL 4 CLEARANCE</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 pt-14 min-h-screen relative overflow-hidden bg-background">
+<div class="absolute inset-0 micro-grid pointer-events-none"></div>
+<div class="max-w-6xl mx-auto p-12 relative z-10">
+<!-- Telemetry Header -->
+<div class="flex items-center justify-between mb-8 border-b border-outline-variant/10 pb-4">
+<div class="flex items-center gap-4">
+<span class="font-label text-[0.6875rem] text-tertiary uppercase tracking-widest font-bold">MODULE: EXP-004</span>
+<span class="w-px h-3 bg-outline-variant"></span>
+<span class="font-label text-[0.6875rem] text-on-surface-variant uppercase font-medium">SYS_TIME: 14:22:09 ZULU</span>
+</div>
+<div class="w-48 h-1 bg-surface-container-high relative">
+<div class="absolute left-0 top-0 h-full bg-tertiary w-3/4"></div>
+</div>
+</div>
+<!-- Page Title & Header Section -->
+<div class="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
+<div>
+<h1 class="font-headline font-extrabold text-[3.5rem] leading-[0.9] tracking-tighter text-on-surface uppercase mb-6">
+                        Export<br/><span class="text-tertiary">Inventory</span>
+</h1>
+<p class="font-body text-on-surface-variant leading-relaxed max-w-md">
+                        Generate comprehensive operational reports and logistics manifests. All exported data is encrypted and time-stamped for audit compliance. Select format and confirm data range before initiating command.
+                    </p>
+</div>
+<div class="flex flex-col items-end gap-4">
+<div class="text-right">
+<span class="block text-on-surface-variant text-[0.6875rem] uppercase font-bold tracking-[0.2em] mb-1">Database Sync Status</span>
+<div class="flex items-center justify-end gap-2 text-primary">
+<span class="material-symbols-outlined text-[1rem]">check_circle</span>
+<span class="font-label text-[0.75rem] font-black uppercase">Active &amp; Synchronized</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Export Action Card -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+<div class="lg:col-span-2 bg-surface-container-low p-8 border-l-4 border-tertiary relative">
+<div class="absolute top-0 right-0 p-4 opacity-5">
+<span class="material-symbols-outlined text-8xl">analytics</span>
+</div>
+<h3 class="font-headline text-[1.25rem] font-black uppercase tracking-widest text-on-surface mb-8">System Report Parameters</h3>
+<div class="grid grid-cols-2 gap-6 mb-12">
+<div class="space-y-2">
+<label class="block font-label text-[0.6rem] text-on-surface-variant uppercase font-bold tracking-widest">Report Type</label>
+<select class="w-full bg-surface-container-highest border-none text-on-surface font-body text-sm py-3 px-4 focus:ring-1 focus:ring-tertiary">
+<option>Full Ordnance Inventory</option>
+<option>Personnel Deployment Log</option>
+<option>Maintenance Schedule</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="block font-label text-[0.6rem] text-on-surface-variant uppercase font-bold tracking-widest">Temporal Range</label>
+<select class="w-full bg-surface-container-highest border-none text-on-surface font-body text-sm py-3 px-4 focus:ring-1 focus:ring-tertiary">
+<option>Last 24 Hours</option>
+<option>Current Deployment Cycle</option>
+<option>Fiscal Quarter</option>
+</select>
+</div>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-headline font-black py-5 px-8 flex items-center justify-center gap-4 hover:bg-primary transition-all active:scale-[0.98] group">
+<span class="material-symbols-outlined">download</span>
+<span class="uppercase tracking-[0.15em] text-lg">Download Inventory (.xlsx)</span>
+</button>
+</div>
+<!-- Summary Info -->
+<div class="space-y-8">
+<div class="bg-surface-container-high p-6 border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-tertiary">info</span>
+<span class="font-headline font-bold uppercase text-xs tracking-widest">System Metrics</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center border-b border-outline-variant/10 pb-2">
+<span class="text-[0.6875rem] text-on-surface-variant uppercase">Total Records</span>
+<span class="font-headline font-black text-on-surface">12,482</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant/10 pb-2">
+<span class="text-[0.6875rem] text-on-surface-variant uppercase">Estimated Size</span>
+<span class="font-headline font-black text-on-surface">4.2 MB</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-[0.6875rem] text-on-surface-variant uppercase">Last Update</span>
+<span class="font-headline font-black text-on-surface">02M AGO</span>
+</div>
+</div>
+</div>
+<div class="bg-tertiary/5 p-6 border border-tertiary/20">
+<p class="text-[0.6rem] text-tertiary uppercase font-bold leading-relaxed">
+<span class="material-symbols-outlined align-middle mr-2 text-sm">warning</span>
+                            Protocol 8: All export actions are logged to global command. Unauthorized dissemination of logistics data is a tier-1 violation.
+                        </p>
+</div>
+</div>
+</div>
+<!-- Recent History Section -->
+<section>
+<div class="flex items-center gap-4 mb-8">
+<h2 class="font-headline text-2xl font-black uppercase tracking-tighter text-on-surface">Recent History</h2>
+<div class="flex-1 h-px bg-outline-variant/20"></div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high">
+<th class="py-4 px-6 font-label text-[0.6rem] text-on-surface-variant uppercase font-bold tracking-[0.2em]">Manifest ID / Filename</th>
+<th class="py-4 px-6 font-label text-[0.6rem] text-on-surface-variant uppercase font-bold tracking-[0.2em]">Generated By</th>
+<th class="py-4 px-6 font-label text-[0.6rem] text-on-surface-variant uppercase font-bold tracking-[0.2em]">Timestamp</th>
+<th class="py-4 px-6 font-label text-[0.6rem] text-on-surface-variant uppercase font-bold tracking-[0.2em]">Size</th>
+<th class="py-4 px-6 font-label text-[0.6rem] text-on-surface-variant uppercase font-bold tracking-[0.2em] text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Entry 1 -->
+<tr class="hover:bg-surface-bright transition-colors">
+<td class="py-5 px-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-primary-container">description</span>
+<div>
+<div class="font-body font-bold text-sm text-on-surface">INV_MANIFEST_2023_Q4_V2.xlsx</div>
+<div class="text-[0.6rem] text-tertiary font-mono">HASH: 4E5C...8A12</div>
+</div>
+</div>
+</td>
+<td class="py-5 px-6">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 bg-on-secondary-fixed text-on-secondary font-black text-[0.5rem] flex items-center justify-center">CM</div>
+<span class="font-body text-xs text-on-surface-variant">Cpt. Miller, S.</span>
+</div>
+</td>
+<td class="py-5 px-6 font-body text-xs text-on-surface-variant">2023-11-20 09:14:42</td>
+<td class="py-5 px-6 font-body text-xs text-on-surface-variant">1.8 MB</td>
+<td class="py-5 px-6 text-right">
+<button class="material-symbols-outlined text-on-primary-container hover:text-tertiary transition-colors">replay</button>
+</td>
+</tr>
+<!-- Entry 2 -->
+<tr class="hover:bg-surface-bright transition-colors">
+<td class="py-5 px-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-primary-container">description</span>
+<div>
+<div class="font-body font-bold text-sm text-on-surface">ORDNANCE_STOCK_WEEKLY_46.xlsx</div>
+<div class="text-[0.6rem] text-tertiary font-mono">HASH: F8B2...D241</div>
+</div>
+</div>
+</td>
+<td class="py-5 px-6">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 bg-on-secondary-fixed text-on-secondary font-black text-[0.5rem] flex items-center justify-center">AL</div>
+<span class="font-body text-xs text-on-surface-variant">Lt. Alvarez, J.</span>
+</div>
+</td>
+<td class="py-5 px-6 font-body text-xs text-on-surface-variant">2023-11-18 18:22:10</td>
+<td class="py-5 px-6 font-body text-xs text-on-surface-variant">2.4 MB</td>
+<td class="py-5 px-6 text-right">
+<button class="material-symbols-outlined text-on-primary-container hover:text-tertiary transition-colors">replay</button>
+</td>
+</tr>
+<!-- Entry 3 -->
+<tr class="hover:bg-surface-bright transition-colors">
+<td class="py-5 px-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-primary-container">description</span>
+<div>
+<div class="font-body font-bold text-sm text-on-surface">LOGISTICS_MAINT_LOG_NOV.xlsx</div>
+<div class="text-[0.6rem] text-tertiary font-mono">HASH: 9A31...C884</div>
+</div>
+</div>
+</td>
+<td class="py-5 px-6">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 bg-on-secondary-fixed text-on-secondary font-black text-[0.5rem] flex items-center justify-center">SY</div>
+<span class="font-body text-xs text-on-surface-variant">SYSTEM_AUTO</span>
+</div>
+</td>
+<td class="py-5 px-6 font-body text-xs text-on-surface-variant">2023-11-15 00:00:01</td>
+<td class="py-5 px-6 font-body text-xs text-on-surface-variant">12.1 MB</td>
+<td class="py-5 px-6 text-right">
+<button class="material-symbols-outlined text-on-primary-container hover:text-tertiary transition-colors">replay</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+<!-- Background Detail Accents -->
+<div class="fixed bottom-12 right-12 pointer-events-none opacity-20">
+<div class="text-[8rem] font-headline font-black text-outline-variant tracking-tighter leading-none select-none">
+                VARAHA
+            </div>
+</div>
+</main>
+</body></html>

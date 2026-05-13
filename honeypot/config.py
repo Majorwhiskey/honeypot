@@ -8,8 +8,8 @@ def _int(key, default):
 
 SSH_PORT       = _int("SSH_PORT", 2222)
 HTTP_PORT      = _int("HTTP_PORT", 8888)
-FTP_PORT       = _int("FTP_PORT", 21)
-TELNET_PORT    = _int("TELNET_PORT", 23)
+FTP_PORT       = _int("FTP_PORT", 2121)
+TELNET_PORT    = _int("TELNET_PORT", 2323)
 DASHBOARD_PORT = _int("DASHBOARD_PORT", 5000)
 
 _ROOT         = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

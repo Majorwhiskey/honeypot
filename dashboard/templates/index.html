@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HONEYPOT // CONTROL CENTER</title>
+  <title>HONEYPOT // THREAT MONITOR</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -13,21 +14,15 @@
 
 <canvas id="matrix-bg"></canvas>
 <div id="scanlines"></div>
+<div class="micro-grid-overlay"></div>
 
-<!-- ─── HEADER ─────────────────────────────────────────────────────────── -->
+<!-- ─── HEADER ──────────────────────────────────────────────────────────── -->
 <header>
   <div class="hdr-left">
-    <div class="hdr-icon">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/>
-        <line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="8.5" x2="22" y2="8.5"/>
-        <line x1="2" y1="15.5" x2="22" y2="15.5"/>
-      </svg>
-    </div>
-    <div>
+    <span class="material-symbols-outlined hdr-icon">bug_report</span>
+    <div class="hdr-brand">
       <div class="hdr-title" data-text="HONEYPOT">HONEYPOT</div>
-      <div class="hdr-sub">THREAT INTELLIGENCE CENTER &nbsp;//&nbsp; CONTROL SYSTEM v2.0</div>
-      <div class="hdr-org">PRAGYAN EDUSEC &nbsp;|&nbsp; KLE INSTITUTE OF TECHNOLOGY</div>
+      <div class="hdr-sub typewriter-text">Threat Monitor</div>
     </div>
   </div>
 
@@ -40,91 +35,185 @@
   </div>
 
   <div class="hdr-right">
-    <div class="hdr-clock" id="clock">00:00:00</div>
+    <div class="hdr-clock animate-subtle-glitch" id="clock">00:00:00</div>
     <div class="hdr-status">
-      <span class="pulse-dot" id="ws-dot"></span>
-      <span class="status-text" id="ws-status">CONNECTING…</span>
+      <span class="ws-dot" id="ws-dot"></span>
+      <span class="ws-label" id="ws-status">CONNECTING…</span>
     </div>
-    <div class="hdr-updated muted" id="last-updated">SYNCING...</div>
+    <div class="hdr-updated" id="last-updated">SYNCING...</div>
   </div>
 </header>
 
-<!-- ─── MAIN ───────────────────────────────────────────────────────────── -->
+<!-- ─── SIDEBAR ─────────────────────────────────────────────────────────── -->
+<aside>
+  <div class="aside-top">
+    <div class="aside-status-block">
+      <div class="aside-sentinel-icon animate-status-pulse">
+        <span class="material-symbols-outlined">radar</span>
+      </div>
+      <div>
+        <div class="aside-node" data-scramble>SENTINEL NODE</div>
+        <div class="aside-status-text">
+          <div class="text-slide-wrap animate-text-slide-3">
+            <div>STATUS: MONITORING</div>
+            <div>STATUS: SCANNING</div>
+            <div>STATUS: ACTIVE</div>
+            <div>STATUS: MONITORING</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="aside-nav">
+      <a href="#stats"          class="nav-item active">
+        <span class="material-symbols-outlined">monitoring</span><span>Statistics</span>
+      </a>
+      <a href="#map-section"    class="nav-item">
+        <span class="material-symbols-outlined">public</span><span>Attack Map</span>
+      </a>
+      <a href="#events-section" class="nav-item">
+        <span class="material-symbols-outlined">stream</span><span>Live Feed</span>
+      </a>
+      <a href="#creds-section"  class="nav-item">
+        <span class="material-symbols-outlined">key</span><span>Credentials</span>
+      </a>
+    </nav>
+  </div>
+  <div class="aside-bottom">
+    <span class="material-symbols-outlined">security</span>
+    <div>
+      <div class="aside-clearance-label">SECURE NODE</div>
+      <div class="aside-clearance-level">LVL 4 CLEARANCE</div>
+    </div>
+  </div>
+  <div class="aside-ghost">HONEYPOT</div>
+</aside>
+
+<!-- ─── MAIN ────────────────────────────────────────────────────────────── -->
 <main>
 
-  <!-- Stat cards -->
-  <div class="stats-row">
-    <div class="card stat-card">
-      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="stat-label">TOTAL ATTACKS</div>
-      <div class="stat-value green" id="total-events">0</div>
-      <div class="stat-bar-row"><div class="stat-bar" style="background:var(--green)"></div></div>
-    </div>
-    <div class="card stat-card">
-      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="stat-label">UNIQUE IPs</div>
-      <div class="stat-value green" id="unique-ips">0</div>
-      <div class="stat-bar-row"><div class="stat-bar" style="background:var(--green);width:60%"></div></div>
-    </div>
-    <div class="card stat-card">
-      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="stat-label">COUNTRIES</div>
-      <div class="stat-value amber" id="countries">0</div>
-      <div class="stat-bar-row"><div class="stat-bar" style="background:var(--amber);width:40%"></div></div>
-    </div>
-    <div class="card stat-card">
-      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="stat-label">CREDENTIALS</div>
-      <div class="stat-value red" id="cred-count">0</div>
-      <div class="stat-bar-row"><div class="stat-bar" style="background:var(--red);width:70%"></div></div>
-    </div>
-    <div class="card stat-card">
-      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="stat-label">SSH / HTTP / FTP / TEL</div>
-      <div class="stat-mini-row">
-        <span class="stat-mini red"   id="ssh-count">0</span>
-        <span class="stat-mini-sep">/</span>
-        <span class="stat-mini amber" id="http-count">0</span>
-        <span class="stat-mini-sep">/</span>
-        <span class="stat-mini blue"  id="ftp-count">0</span>
-        <span class="stat-mini-sep">/</span>
-        <span class="stat-mini purple" id="telnet-count">0</span>
+  <!-- STATS -->
+  <section id="stats">
+    <div class="section-header">
+      <div class="section-module-id">
+        <span class="module-dot"></span>
+        <span class="typewriter-text">MODULE: THREAT-INTEL-001</span>
       </div>
-      <div class="stat-bar-row"><div class="stat-bar" style="background:var(--amber);width:30%"></div></div>
+      <h2 class="section-title" data-scramble>Attack Telemetry</h2>
+      <p class="section-desc">Real-time honeypot intrusion monitoring and threat analysis.</p>
     </div>
-  </div>
 
-  <!-- Map -->
-  <div class="card map-card">
-    <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-    <div class="card-title">
-      <span class="title-bracket">[</span> GLOBAL ATTACK ORIGINS <span class="title-bracket">]</span>
+    <div class="stats-grid">
+      <div class="stat-card border-ssh">
+        <div class="stat-card-header ssh-icon">
+          <span class="material-symbols-outlined">bolt</span>
+          <span class="stat-label">Total Events</span>
+        </div>
+        <div class="stat-value ssh" id="total-events">0</div>
+        <p class="stat-desc">Attack attempts logged</p>
+      </div>
+      <div class="stat-card border-accent">
+        <div class="stat-card-header accent-icon">
+          <span class="material-symbols-outlined">devices</span>
+          <span class="stat-label">Unique IPs</span>
+        </div>
+        <div class="stat-value accent" id="unique-ips">0</div>
+        <p class="stat-desc">Distinct threat sources</p>
+      </div>
+      <div class="stat-card border-primary">
+        <div class="stat-card-header primary-icon">
+          <span class="material-symbols-outlined">language</span>
+          <span class="stat-label">Countries</span>
+        </div>
+        <div class="stat-value primary" id="countries">0</div>
+        <p class="stat-desc">Nations of origin</p>
+      </div>
+      <div class="stat-card border-http">
+        <div class="stat-card-header http-icon">
+          <span class="material-symbols-outlined">key</span>
+          <span class="stat-label">Credentials</span>
+        </div>
+        <div class="stat-value http" id="cred-count">0</div>
+        <p class="stat-desc">Login attempts captured</p>
+      </div>
+
+      <!-- Service breakdown -->
+      <div class="stat-card service-card">
+        <div class="service-card-header">
+          <div>
+            <div class="service-label-top">Protocol Analysis</div>
+            <div class="service-label-main">By Service</div>
+          </div>
+          <span class="material-symbols-outlined animate-pulse accent-icon-lg">sensors</span>
+        </div>
+        <div class="service-bars">
+          <div class="service-bar-item">
+            <div class="service-bar-label">
+              <span>SSH</span><span id="ssh-count" class="ssh">0</span>
+            </div>
+            <div class="service-bar-track"><div class="service-bar-fill ssh-fill" id="ssh-bar"></div></div>
+          </div>
+          <div class="service-bar-item">
+            <div class="service-bar-label">
+              <span>HTTP</span><span id="http-count" class="http">0</span>
+            </div>
+            <div class="service-bar-track"><div class="service-bar-fill http-fill" id="http-bar"></div></div>
+          </div>
+          <div class="service-bar-item">
+            <div class="service-bar-label">
+              <span>FTP</span><span id="ftp-count" class="primary">0</span>
+            </div>
+            <div class="service-bar-track"><div class="service-bar-fill ftp-fill" id="ftp-bar"></div></div>
+          </div>
+          <div class="service-bar-item">
+            <div class="service-bar-label">
+              <span>Telnet</span><span id="telnet-count" class="accent">0</span>
+            </div>
+            <div class="service-bar-track"><div class="service-bar-fill telnet-fill" id="telnet-bar"></div></div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div id="map"></div>
-  </div>
+  </section>
 
-  <!-- Three-column charts -->
-  <div class="three-col">
+  <!-- MAP -->
+  <section id="map-section">
+    <div class="section-divider">
+      <h2 class="section-title-sm" data-scramble>Global Attack Origins</h2>
+      <div class="divider-line"></div>
+    </div>
+    <div class="card radar-effect">
+      <div class="radar-sweep-line"></div>
+      <div id="map"></div>
+    </div>
+  </section>
+
+  <!-- CHARTS -->
+  <div class="charts-grid">
     <div class="card">
-      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="card-title"><span class="title-bracket">[</span> ATTACK TIMELINE &mdash; LAST 24H <span class="title-bracket">]</span></div>
+      <div class="card-title-row">
+        <span class="material-symbols-outlined">timeline</span>
+        <span>Attack Volume — Last 24H</span>
+      </div>
       <div class="chart-wrap"><canvas id="timeline-chart"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="card-title"><span class="title-bracket">[</span> TOP THREAT ACTORS <span class="title-bracket">]</span></div>
+      <div class="card-title-row">
+        <span class="material-symbols-outlined">format_list_numbered</span>
+        <span>Top Threat Actors</span>
+      </div>
       <div class="chart-wrap"><canvas id="top-ips-chart"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="card-title"><span class="title-bracket">[</span> COUNTRY DISTRIBUTION <span class="title-bracket">]</span></div>
+      <div class="card-title-row">
+        <span class="material-symbols-outlined">donut_large</span>
+        <span>Country Distribution</span>
+      </div>
       <div class="chart-wrap"><canvas id="country-chart"></canvas></div>
     </div>
   </div>
 
-  <!-- Filter / export bar -->
-  <div class="filter-bar card">
-    <div class="card-corner-tl"></div><div class="card-corner-br"></div>
+  <!-- FILTER BAR -->
+  <div class="filter-bar card" id="events-section">
     <div class="filter-inner">
       <div class="filter-group">
         <select id="filter-service" class="filter-select">
@@ -134,10 +223,10 @@
           <option value="ftp">FTP</option>
           <option value="telnet">TELNET</option>
         </select>
-        <input id="filter-country" class="filter-input" placeholder="COUNTRY…" maxlength="40">
-        <input id="filter-ip"      class="filter-input" placeholder="IP ADDRESS…" maxlength="40">
+        <input id="filter-country" class="filter-input"      placeholder="COUNTRY…"              maxlength="40">
+        <input id="filter-ip"      class="filter-input"      placeholder="IP ADDRESS…"            maxlength="40">
         <input id="filter-q"       class="filter-input wide" placeholder="SEARCH USERNAME / PATH…" maxlength="80">
-        <button class="filter-btn" onclick="applyFilter()">FILTER</button>
+        <button class="filter-btn"     onclick="applyFilter()">FILTER</button>
         <button class="filter-btn dim" onclick="clearFilter()">CLEAR</button>
       </div>
       <div class="export-group">
@@ -148,11 +237,17 @@
     </div>
   </div>
 
-  <!-- Tables -->
-  <div class="two-col">
-    <div class="card">
-      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="card-title"><span class="title-bracket">[</span> CREDENTIAL INTELLIGENCE <span class="title-bracket">]</span></div>
+  <!-- TABLES -->
+  <div class="tables-grid">
+    <!-- Credentials -->
+    <div id="creds-section" class="card table-card">
+      <div class="scan-overlay"></div>
+      <div class="table-card-header">
+        <div class="card-title-row">
+          <span class="material-symbols-outlined">key</span>
+          <span>Credential Intelligence</span>
+        </div>
+      </div>
       <div class="table-wrap">
         <table id="cred-table">
           <thead><tr><th>SVC</th><th>USERNAME</th><th>PASSWORD</th><th>ATTEMPTS</th></tr></thead>
@@ -160,11 +255,16 @@
         </table>
       </div>
     </div>
-    <div class="card">
-      <div class="card-corner-tl"></div><div class="card-corner-br"></div>
-      <div class="card-title">
-        <span class="title-bracket">[</span> LIVE EVENT FEED <span class="title-bracket">]</span>
-        <span class="live-badge">&#9679; LIVE</span>
+
+    <!-- Events -->
+    <div class="card table-card">
+      <div class="scan-overlay"></div>
+      <div class="table-card-header">
+        <div class="card-title-row">
+          <span class="material-symbols-outlined">stream</span>
+          <span>Live Event Feed</span>
+          <span class="live-badge animate-status-pulse">● LIVE</span>
+        </div>
       </div>
       <div class="table-wrap" id="events-wrap">
         <table id="events-table">
@@ -173,26 +273,26 @@
         </table>
       </div>
       <div class="pagination-bar">
-        <button class="pg-btn" id="btn-prev" onclick="prevPage()">&#9664; PREV</button>
-        <span class="pg-info" id="page-info">PAGE 1</span>
-        <button class="pg-btn" id="btn-next" onclick="nextPage()">NEXT &#9654;</button>
-        <span class="pg-total muted" id="total-info"></span>
+        <button class="pg-btn" id="btn-prev" onclick="prevPage()">◀ PREV</button>
+        <span   class="pg-info" id="page-info">PAGE 1</span>
+        <button class="pg-btn" id="btn-next" onclick="nextPage()">NEXT ▶</button>
+        <span   class="pg-total" id="total-info"></span>
       </div>
     </div>
   </div>
 
-</main>
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-brand">PRAGYAN EDUSEC</span>
+      <span class="footer-sep">//</span>
+      <span class="footer-college footer-kle">KLE INSTITUTE OF TECHNOLOGY</span>
+      <span class="footer-sep">//</span>
+      <span class="footer-copy">INTERNSHIP PROJECT &copy; 2026</span>
+    </div>
+  </footer>
 
-<!-- ─── FOOTER ──────────────────────────────────────────────────────────── -->
-<footer>
-  <div class="footer-inner">
-    <span class="footer-company">PRAGYAN EDUSEC</span>
-    <span class="footer-sep">//</span>
-    <span class="footer-college">KLE INSTITUTE OF TECHNOLOGY</span>
-    <span class="footer-sep">//</span>
-    <span class="footer-copy">INTERNSHIP PROJECT &nbsp;&copy; 2026</span>
-  </div>
-</footer>
+</main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
