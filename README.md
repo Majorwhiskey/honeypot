@@ -6,6 +6,12 @@ A professional-grade multi-service honeypot that emulates SSH, HTTP, FTP, and Te
 
 ---
 
+## Architecture Diagram
+
+![Honeypot System Architecture](architecture.png)
+
+---
+
 ## Features
 
 - **SSH Honeypot** — presents an OpenSSH banner, accepts auth, and drops attackers into a fully interactive fake shell; logs every command typed, including malware download URLs (`wget`/`curl`)
