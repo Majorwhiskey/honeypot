@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     banner = "=" * 62
     print(banner)
-    print("  HONEYPOT SYSTEM  —  PRAGYAN EDUSEC")
+    print("  HONEYPOT SYSTEM  --  PRAGYAN EDUSEC")
     print("  KLE INSTITUTE OF TECHNOLOGY  //  INTERNSHIP PROJECT")
     print(banner)
 
@@ -84,16 +84,16 @@ if __name__ == "__main__":
         threads.append(t)
 
     print()
-    print(f"  Dashboard  →  http://localhost:{DASHBOARD_PORT}")
-    print(f"  SSH        →  port {SSH_PORT}")
-    print(f"  HTTP       →  http://localhost:{HTTP_PORT}")
-    print(f"  FTP        →  port {FTP_PORT}")
-    print(f"  Telnet     →  port {TELNET_PORT}")
+    print(f"  Dashboard  ->  http://localhost:{DASHBOARD_PORT}")
+    print(f"  SSH        ->  port {SSH_PORT}")
+    print(f"  HTTP       ->  http://localhost:{HTTP_PORT}")
+    print(f"  FTP        ->  port {FTP_PORT}")
+    print(f"  Telnet     ->  port {TELNET_PORT}")
     if FTP_PORT < 1024 or TELNET_PORT < 1024:
         print()
         print("  NOTE: ports < 1024 require  sudo  on Linux")
     print()
-    print(f"  Logs       →  {LOG_FILE}")
+    print(f"  Logs       ->  {LOG_FILE}")
     print()
     print("  Press Ctrl+C to stop")
     print(banner)

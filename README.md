@@ -279,7 +279,44 @@ ftp localhost 2121
 
 # Telnet
 telnet localhost 2323
+```
 
+### Windows Notes
+
+**SSH** works out of the box (OpenSSH client is built into Windows 10/11):
+```
+ssh -p 2222 root@localhost
+```
+
+**FTP** — the Windows built-in `ftp` command does not accept a port as a positional argument. Use the interactive mode instead:
+```
+ftp
+open localhost 2121
+```
+Then enter any username and password when prompted.
+
+**Telnet** — the client is not enabled by default. Enable it once in an Administrator PowerShell:
+```powershell
+Enable-WindowsOptionalFeature -Online -FeatureName TelnetClient
+```
+Then connect normally:
+```
+telnet localhost 2323
+```
+
+If you prefer not to enable the Telnet client, use PowerShell directly (no admin required):
+```powershell
+$tcp = New-Object System.Net.Sockets.TcpClient("localhost", 2323)
+$stream = $tcp.GetStream()
+$reader = New-Object System.IO.StreamReader($stream)
+$writer = New-Object System.IO.StreamWriter($stream)
+Start-Sleep -Milliseconds 500
+$writer.WriteLine("admin"); $writer.Flush(); Start-Sleep -Milliseconds 300
+$writer.WriteLine("admin123"); $writer.Flush(); Start-Sleep -Milliseconds 300
+$tcp.Close()
+```
+
+```bash
 # HTTP — common attack paths
 curl http://localhost:8888/wp-login.php
 curl http://localhost:8888/.env
