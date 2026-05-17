@@ -72,11 +72,44 @@ def _is_private(ip):
         return False
 
 
+_public_geo = None  # cached location of this machine's public IP
+
+
+def _get_public_geo():
+    """Return GeoIP of the honeypot's own public IP for LAN attacker location."""
+    global _public_geo
+    if _public_geo is not None:
+        return _public_geo
+    try:
+        r = requests.get("http://ip-api.com/json", timeout=4)
+        data = r.json()
+        if data.get("status") == "success":
+            _public_geo = {
+                "country": data.get("country", ""),
+                "city":    data.get("city", ""),
+                "lat":     data.get("lat",  0.0),
+                "lon":     data.get("lon",  0.0),
+                "asn":     data.get("as",   ""),
+            }
+        else:
+            _public_geo = {"country": "", "city": "", "lat": 0.0, "lon": 0.0, "asn": ""}
+    except Exception:
+        _public_geo = {"country": "", "city": "", "lat": 0.0, "lon": 0.0, "asn": ""}
+    return _public_geo
+
+
 def _geoip(ip):
     if ip in _geo_cache:
         return _geo_cache[ip]
     if _is_private(ip):
-        result = {"country": "Local", "city": "Local", "lat": 0.0, "lon": 0.0, "asn": ""}
+        pub = _get_public_geo()
+        result = {
+            "country": pub["country"],
+            "city":    f"LAN ({pub['city']})" if pub["city"] else "LAN",
+            "lat":     pub["lat"],
+            "lon":     pub["lon"],
+            "asn":     "Local Network",
+        }
         _geo_cache[ip] = result
         return result
     try:
